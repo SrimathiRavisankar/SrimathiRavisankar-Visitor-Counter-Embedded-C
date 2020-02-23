@@ -1,0 +1,125 @@
+#include<pic.h>
+void lcdcmd(unsigned char);
+void lcddata(unsigned char);
+void delay(unsigned char);
+void lcdready();
+main()
+{
+
+	TRISD=0;
+	TRISB=0;
+	RB2=0;
+TRISC0=1;
+	delay(250);
+	lcdcmd(0x08);
+	lcdready();
+	lcdcmd(0x0E);
+	lcdready();
+	lcdcmd(0x01);
+	lcdready();
+	lcdcmd(0x06);
+	lcdready();
+	lcdcmd(0x80);
+	lcdready();
+unsigned int count=0;
+	unsigned char a[]="EMBEDDED SYSTEM";
+unsigned int u=48;
+unsigned int w=0;
+unsigned int y=0;
+unsigned int num=1;
+
+while(1)
+{
+if(RC0==1)
+{
+if(((count+u)<57)&&(y==0))
+{
+count=count+1;
+lcdcmd(0x01);
+lcdready();
+lcdcmd(0x06);
+lcdready();
+lcdcmd(0x80);
+lcddata(count+u);
+delay(40);
+if(((count+u)==57))
+{
+y=1;
+}
+}
+else
+{
+if(w==0)
+{
+count=0;
+w=1;
+lcddata('1');
+lcddata('0');
+delay(40);
+}
+else
+{
+if(count+u==57)
+{
+num++;
+count=0;
+lcddata(num+48);
+lcddata('0');
+delay(40);
+}
+else
+{
+count++;
+lcddata(num+48);
+lcddata(count+u);
+delay(40);
+}
+}
+}
+lcdcmd(0x01);
+lcdready();
+lcdcmd(0x06);
+lcdready();
+lcdcmd(0x80);
+//lcddata(count+u);
+}
+}
+unsigned char i=0;
+	}
+	void lcdcmd(unsigned char c)
+	{
+		PORTD=c;
+		RB0=0;
+		RB1=0;
+		RB2=1;
+		delay(1);
+		RB2=0;
+		}
+		void lcddata(unsigned char d)
+		{
+			PORTD=d;
+			RB0=1;
+			RB1=0;
+			RB2=1;
+			delay(1);
+			RB2=0;
+			}
+			void lcdready()
+			{
+				TRISD=0xFF;
+				RB0=0;
+				RB1=1;
+				do
+				{
+					RB2=1;
+					delay(1);
+					RB2=0;
+					}while(RD7==1);
+					TRISD=0;
+					}
+					void delay(unsigned char times)
+                     {
+                      unsigned char i,j;
+                      for(i=0;i<times;i++)
+                         for(j=0;j<165;j++);
+                     }   
